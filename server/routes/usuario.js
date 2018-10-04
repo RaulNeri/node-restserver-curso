@@ -8,9 +8,20 @@ const _ = require('underscore');
 
 const Usuario = require('../models/usuario');
 
+//Importacion para usar, con destructuración
+const { verificaToken, verificaAdminRole } = require('../middlewares/autenticacion');
+
 const app = express();
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, (req, res) => {
+    //Uso de todas las propiedades que tiene el usuario
+    // return res.json({
+    //     //Tengo toda la información de un usuario
+    //     usuario: req.usuario,
+    //     nombre: req.usuario.nombre,
+    //     email: req.usuario.email
+    // })
+
     //Respuesta del servicio
     //Parametros opcionales para que el usuario diga cuantos datos muestra
     let desde = req.query.desde || 0;
@@ -41,7 +52,7 @@ app.get('/usuario', function(req, res) {
         });
 });
 
-app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificaToken, verificaAdminRole], function(req, res) {
 
     //Se obtiene la información del POST
     let body = req.body;
@@ -77,7 +88,7 @@ app.post('/usuario', function(req, res) {
     });
 });
 
-app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificaToken, verificaAdminRole], function(req, res) {
 
     let id = req.params.id;
     //Información del body
@@ -100,7 +111,7 @@ app.put('/usuario/:id', function(req, res) {
 });
 
 //Borrar
-app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificaToken, verificaAdminRole], function(req, res) {
 
     let id = req.params.id;
     //Ejercicio 15. Borrar cambiando estado
